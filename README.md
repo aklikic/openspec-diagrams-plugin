@@ -9,34 +9,39 @@ Reads your OpenSpec specs and design documents and generates visual diagrams:
 
 ## Installation
 
-### Claude Code (plugin)
+### Claude Code (plugin from GitHub)
 
 ```sh
-# From a git repo
-claude plugin marketplace add <github-user>/openspec-diagrams
-claude plugin install openspec-diagrams
+# Register as a marketplace (project-scoped)
+claude plugin marketplace add aklikic/openspec-diagrams-plugin --scope project
 
-# Or load locally for a session
-claude --plugin-dir /path/to/openspec-diagrams
+# Install the plugin
+claude plugin install openspec-diagrams --scope project
 ```
 
-### Copilot / agents (via apm)
-
-If published to a marketplace:
+Or load locally for a single session:
 ```sh
-apm install openspec-diagrams@<marketplace-name>
+claude --plugin-dir /path/to/openspec-diagrams-plugin
 ```
 
-### Manual copy
+### Copilot / agents (manual from git)
 
-Copy the skill files into your project:
+Clone and copy the skill files into your project:
+```sh
+git clone https://github.com/aklikic/openspec-diagrams-plugin.git
+cp -r openspec-diagrams-plugin/skills/diagrams <your-project>/.agents/skills/diagrams
+```
+
+For GitHub Copilot specifically:
+```sh
+cp -r openspec-diagrams-plugin/skills/diagrams <your-project>/.github/copilot/skills/diagrams
+```
+
+### Manual copy (any tool)
+
+If you already have the repo locally:
 ```sh
 cp -r skills/diagrams <your-project>/.agents/skills/diagrams
-```
-
-Or for Claude Code specifically:
-```sh
-cp -r skills/diagrams <your-project>/.claude/skills/diagrams
 ```
 
 ## Usage
@@ -59,17 +64,16 @@ The skill will:
 ## Structure
 
 ```
-openspec-diagrams/
-  .claude-plugin/          # Claude Code plugin manifests
+openspec-diagrams-plugin/
+  .claude-plugin/              # Claude Code plugin manifests
     plugin.json
     marketplace.json
-  .apm/                    # apm distribution (Copilot/agents)
-    skills/diagrams/
-  skills/diagrams/         # Source skill files
-    SKILL.md               # Skill definition
+  .apm/skills/diagrams/        # apm-compatible distribution
+  skills/diagrams/             # Source skill files
+    SKILL.md                   # Skill definition
     spec-diagrams.template.md
     design-diagrams.template.md
-  plugin.json              # apm plugin metadata
+  plugin.json                  # Plugin metadata
 ```
 
 ## License
