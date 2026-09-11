@@ -42,6 +42,22 @@ Add numbered markers on flowchart edge labels to show execution order.
 Use `linkStyle N stroke:#RRGGBB,stroke-width:2px` to color edges by flow.
 `linkStyle` indices are 0-based and match the order edges are declared.
 
+## Arrow Conventions — Component vs Domain Object
+
+Distinguish between runtime component-to-component communication and
+compile-time dependencies on domain objects:
+
+| Relationship | Arrow | Label examples | When to use |
+|---|---|---|---|
+| Component-to-component (runtime call via `ComponentClient`, HTTP, gRPC) | Solid thick arrow `==>` | "invoke", "command", "query" | Endpoint→Entity, Endpoint→Agent, Agent→Entity, Workflow→Entity |
+| Component-to-service-object (runtime call to an injected dependency) | Solid arrow `-->` | "loads", "get catalog" | Entity→Provider, Agent→Provider |
+| Component/object uses domain object (compile-time, in-process) | Thin dotted arrow `-.->` with italic label | "_builds_", "_uses_", "_produces_" | Entity→DomainRecord, Agent→DomainRecord, Provider→DomainRecord |
+| External system connection | Dotted arrow `-.->` | "request", "POST /path" | Client→Endpoint |
+
+This prevents confusion between a `ComponentClient` call (crosses process
+boundaries, involves serialization) and a plain Java method call or object
+construction.
+
 ---
 
 ## 1. Component Dependencies
@@ -53,6 +69,10 @@ Use `linkStyle N stroke:#RRGGBB,stroke-width:2px` to color edges by flow.
   - Color edges by flow type (see Color Conventions)
   - Sequence numbers on connections show runtime call order
   - External / out-of-scope: dashed border node + dotted arrow
+  - IMPORTANT: Use different arrow styles to distinguish:
+    - ==> for component-to-component calls (ComponentClient, HTTP, gRPC)
+    - --> for component-to-service-object calls (injected dependencies)
+    - -.-> with italic label for compile-time domain object usage
 -->
 
 ```mermaid
@@ -66,13 +86,22 @@ flowchart TD
     end
 
     subgraph application["Application Layer"]
-        SVC[Service]
+        Entity[Entity]
+        Provider[Provider]
+    end
+
+    subgraph domain["Domain Layer"]
+        Record[DomainRecord]
     end
 
     Client -.->|"1. request"| EP
-    EP -->|"2. invoke"| SVC
+    EP ==>|"2. command"| Entity
+    Entity -->|"3. loads"| Provider
+    Entity -.->|"_builds_"| Record
+    Provider -.->|"_supplies_"| Record
 
     style Client stroke-dasharray:5 5,stroke:#999,fill:#f5f5f5,color:#333
+    style Record fill:#E8EAF6,stroke:#7986CB,color:#333
 
     linkStyle 0 stroke:#2196F3,stroke-width:2px
     linkStyle 1 stroke:#FF9800,stroke-width:2px
