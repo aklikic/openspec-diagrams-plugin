@@ -58,6 +58,18 @@ This prevents confusion between a `ComponentClient` call (crosses process
 boundaries, involves serialization) and a plain Java method call or object
 construction.
 
+## Node Styling — Akka Components vs Plain Objects
+
+Distinguish Akka SDK components (managed by the runtime) from plain Java
+objects and domain records using node shape and fill color:
+
+| Node type | Shape | Fill | When to use |
+|---|---|---|---|
+| Akka component (Entity, Workflow, Agent, View, Consumer, Endpoint) | Rectangle with bold border `[["Name"]]` | `fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#333` | Any class extending an Akka SDK base or annotated with `@HttpEndpoint`, `@ComponentId`, etc. |
+| Service object (Provider, Client, PromptBuilder) | Rectangle `["Name"]` | `fill:#FFF3E0,stroke:#EF6C00,color:#333` | Injected dependencies, helpers — not Akka-managed |
+| Domain record (State, Event, Value Object) | Rounded rectangle `(["Name"])` | `fill:#E8EAF6,stroke:#7986CB,color:#333` | Records, sealed interfaces, value objects in the domain layer |
+| External system | Rounded rectangle `(["Name"])` | `stroke-dasharray:5 5,stroke:#999,fill:#f5f5f5,color:#333` | Systems outside the service boundary |
+
 ---
 
 ## 1. Component Dependencies
@@ -73,25 +85,29 @@ construction.
     - ==> for component-to-component calls (ComponentClient, HTTP, gRPC)
     - --> for component-to-service-object calls (injected dependencies)
     - -.-> with italic label for compile-time domain object usage
+  - IMPORTANT: Use different node styling to distinguish:
+    - Akka components: bold border, blue fill
+    - Service objects: orange fill
+    - Domain records: indigo fill, rounded
 -->
 
 ```mermaid
 flowchart TD
     subgraph ext["External / Out of Scope"]
-        Client([Client])
+        Client(["Client"])
     end
 
     subgraph api["API Layer"]
-        EP[Endpoint]
+        EP[["Endpoint"]]
     end
 
     subgraph application["Application Layer"]
-        Entity[Entity]
-        Provider[Provider]
+        Entity[["Entity"]]
+        Provider["Provider"]
     end
 
     subgraph domain["Domain Layer"]
-        Record[DomainRecord]
+        Record(["DomainRecord"])
     end
 
     Client -.->|"1. request"| EP
@@ -101,6 +117,10 @@ flowchart TD
     Provider -.->|"_supplies_"| Record
 
     style Client stroke-dasharray:5 5,stroke:#999,fill:#f5f5f5,color:#333
+    style EP fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#333
+    style Entity fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#333
+    style Provider fill:#FFF3E0,stroke:#EF6C00,color:#333
+    style Record fill:#E8EAF6,stroke:#7986CB,color:#333
     style Record fill:#E8EAF6,stroke:#7986CB,color:#333
 
     linkStyle 0 stroke:#2196F3,stroke-width:2px
