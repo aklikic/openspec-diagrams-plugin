@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "name": "openspec-diagrams",
+  "description": "Mermaid diagram generation from OpenSpec specs and design artifacts",
+  "plugins": [
+    {
+      "name": "openspec-diagrams",
+      "version": "1.0.0",
+      "description": "Generate Mermaid diagrams from OpenSpec change artifacts (specs and design)",
+      "path": "."
+    }
+  ]
+}

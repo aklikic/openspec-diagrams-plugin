@@ -1,0 +1,11 @@
+{
+  "name": "openspec-diagrams",
+  "version": "1.0.0",
+  "description": "Mermaid diagram generation from OpenSpec specs and design artifacts",
+  "skills": [
+    {
+      "name": "diagrams",
+      "path": "../skills/diagrams/SKILL.md"
+    }
+  ]
+}
