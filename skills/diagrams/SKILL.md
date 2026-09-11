@@ -84,6 +84,10 @@ Produces implementation-level component diagrams:
 
 ## Critical Constraints
 
+- You MUST read the template file before generating and apply all visual
+  styling it defines: node `style` directives with colors from the Color
+  Conventions table, `linkStyle` edge coloring, sequence numbers on edges,
+  `rect` blocks in sequence diagrams, and external system dashed borders.
 - Omit diagram sections entirely if the prerequisite content does not exist
   in the source artifacts. Never invent data to fill a diagram.
 - Use exact names and terminology from the source artifacts. Do not rename
